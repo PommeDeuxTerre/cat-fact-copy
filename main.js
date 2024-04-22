@@ -43,6 +43,23 @@ function get_amount(url){
     return url.match(reg)[1];
 }
 
+function get_fact_by_id(id, id_animal=0){
+    if (id_animal>3)return false;
+    const facts = [cat_datas, dog_datas, horse_datas, snail_datas][id_animal];
+    let min = 0;
+    let max = facts.length-1;
+    let mid;
+    while (max>=min){
+        mid = min + Math.floor((max-min) / 2);
+        if (mid >= facts.length || mid < 0)break;
+
+        if (facts[mid]["_id"]===id)return facts[mid];
+        if (facts[mid]["_id"] > id)max = mid - 1;
+        else min = mid + 1;
+    }
+    return get_fact_by_id(id, id_animal+1);
+}
+
 function return_http_error(error_code, res, status_message=null){
 	if (status_message)res.writeHead(error_code, status_message);
 	else res.writeHead(error_code);
@@ -87,9 +104,9 @@ const server = http.createServer(function (req, res){
                 return return_http_error(404, res, "invalid url");
             }
             const id = parameters.substring(7);
-            const fact = all_datas.filter((el)=>el["_id"]===id);
-            if (fact.length===0)return return_http_error("404", res, "fact not found");
-            return return_http_result(res, 200, headers, JSON.stringify(fact[0]));
+            const fact = get_fact_by_id(id);
+            if (!fact)return return_http_error("404", res, "fact not found");
+            return return_http_result(res, 200, headers, JSON.stringify(fact));
     }
 });
 
