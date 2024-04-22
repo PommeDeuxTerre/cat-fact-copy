@@ -1,9 +1,28 @@
 const http = require("http");
-const datas = require("./datas.json");
+const cat_datas = require("./cat.json");
+const dog_datas = require("./dog.json");
+const horse_datas = require("./horse.json");
+const snail_datas = require("./snail.json");
+const all_datas = cat_datas.concat(dog_datas, horse_datas, snail_datas);
 
 const port = 8080;
 
-function get_random_facts(number){
+function get_random_facts(number, animal_type){
+    let datas;
+    switch (animal_type){
+        case "cat":
+            datas = cat_datas;
+            break;
+        case "dog":
+            datas = dog_datas;
+            break;
+        case "horse":
+            datas = horse_datas;
+            break;
+        case "snail":
+            datas = snail_datas;
+            break;
+    }
     let facts = [];
     for (let i=0;i<number;i++){
         const id = Math.floor(Math.random()*datas.length);
@@ -57,10 +76,10 @@ const server = http.createServer(function (req, res){
 
             if (!animal_type)return return_http_error(404, res, "the parameter animal_type is missing");
             if (!amount)return return_http_error(404, res, "the parameter amount is missing");
-            if (animal_type!=="cat")return return_http_error(404, res, "incorrect value for animal_type");
             if (!/^[0-9]+$/.test(amount) || Number(amount)>500 || Number(amount)<1)return return_http_error(404, res, "incorrect value for amount");
+            if (!["cat", "dog", "horse", "snail"].includes(animal_type))return return_http_error(404, res, "incorrect value for animal_type");
 
-            const json_datas = get_random_facts(amount);
+            const json_datas = get_random_facts(amount, animal_type);
             return return_http_result(res, 200, headers, JSON.stringify(json_datas));
         //by id
         default:
@@ -68,7 +87,7 @@ const server = http.createServer(function (req, res){
                 return return_http_error(404, res, "invalid url");
             }
             const id = parameters.substring(7);
-            const fact = datas.filter((el)=>el["_id"]===id);
+            const fact = all_datas.filter((el)=>el["_id"]===id);
             if (fact.length===0)return return_http_error("404", res, "fact not found");
             return return_http_result(res, 200, headers, JSON.stringify(fact[0]));
     }
