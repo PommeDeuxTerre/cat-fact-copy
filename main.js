@@ -90,17 +90,17 @@ const server = http.createServer(function (req, res){
             const animal_type = get_animal_type(url);
             const amount = get_amount(url);
 
-            if (!animal_type)return return_http_error(404, res, "the parameter animal_type is missing");
-            if (!amount)return return_http_error(404, res, "the parameter amount is missing");
-            if (!/^[0-9]+$/.test(amount) || Number(amount)>500 || Number(amount)<1)return return_http_error(404, res, "incorrect value for amount");
-            if (!["cat", "dog", "horse", "snail"].includes(animal_type))return return_http_error(404, res, "incorrect value for animal_type");
+            if (!animal_type)return return_http_error(400, res, "the parameter animal_type is missing");
+            if (!amount)return return_http_error(400, res, "the parameter amount is missing");
+            if (!/^[0-9]+$/.test(amount) || Number(amount)>500 || Number(amount)<1)return return_http_error(400, res, "incorrect value for amount");
+            if (!["cat", "dog", "horse", "snail"].includes(animal_type))return return_http_error(400, res, "incorrect value for animal_type");
 
             const json_datas = get_random_facts(amount, animal_type);
             return return_http_result(res, 200, headers, JSON.stringify(json_datas));
         //by id
         default:
             if (!/facts\/[a-zA-Z0-9]+$/.test(parameters)){
-                return return_http_error(404, res, "invalid url");
+                return return_http_error(400, res, "invalid url");
             }
             const id = parameters.substring(7);
             const fact = get_fact_by_id(id);
