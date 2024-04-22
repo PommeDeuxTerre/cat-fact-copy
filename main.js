@@ -1,9 +1,8 @@
 const http = require("http");
-const cat_datas = require("./cat.json");
-const dog_datas = require("./dog.json");
-const horse_datas = require("./horse.json");
-const snail_datas = require("./snail.json");
-const all_datas = cat_datas.concat(dog_datas, horse_datas, snail_datas);
+const cat_datas = require("./datas/cat.json");
+const dog_datas = require("./datas/dog.json");
+const horse_datas = require("./datas/horse.json");
+const snail_datas = require("./datas/snail.json");
 
 const port = 8080;
 
